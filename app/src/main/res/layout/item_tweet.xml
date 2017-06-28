@@ -26,7 +26,6 @@
         android:id="@+id/tvBody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/ivProfileImage"
         android:layout_alignStart="@+id/tvUserName"
         android:layout_below="@+id/tvUserName"
         android:layout_marginLeft="5dp"
@@ -47,8 +46,9 @@
         android:id="@+id/tvRelativeTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/tvScreenName"
-        android:layout_alignParentEnd="true"
-        android:text="Time Stamp" />
+        android:text="Time Stamp"
+        android:layout_marginLeft="5dp"
+        android:layout_below="@+id/tvBody"
+        android:layout_toEndOf="@+id/ivProfileImage"/>
 
 </RelativeLayout>

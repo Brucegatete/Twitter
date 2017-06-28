@@ -1,11 +1,13 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -23,14 +25,9 @@ public class TimelineActivity extends AppCompatActivity {
     TweetAdapter tweetAdapter;
     ArrayList<Tweet> tweets;
     RecyclerView rvTweets;
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+    //Request code for receiving the data sent between activities
+    private final int REQUEST_CODE = 20;
+    private final int RESULT_OK = 12;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +39,9 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweets = (RecyclerView) findViewById(R.id.rvTweet);
 
         // init the arraylist (data sources)
-       tweets = new ArrayList<>();
+        tweets = new ArrayList<>();
         //construct the adapter from this datasource
-       tweetAdapter = new TweetAdapter(tweets);
+        tweetAdapter = new TweetAdapter(tweets);
         // RecyclerView setup (layout manager,  use the adapter)
         rvTweets.setLayoutManager(new LinearLayoutManager(this));
         //set the adapter
@@ -52,6 +49,14 @@ public class TimelineActivity extends AppCompatActivity {
 
         populateTimeline();
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+
     private void populateTimeline (){
         client.getHomeTimeline(new JsonHttpResponseHandler(){
             @Override
@@ -77,11 +82,7 @@ public class TimelineActivity extends AppCompatActivity {
                     }
                     tweets.add(tweet);
                     tweetAdapter.notifyItemInserted(tweets.size() - 1);;
-
-
                 }
-
-
             }
 
             @Override
@@ -101,7 +102,29 @@ public class TimelineActivity extends AppCompatActivity {
                 Log.d("TwitterClient", errorResponse.toString());
                 throwable.printStackTrace();
             }
+
         });
+
+    }
+
+    //method that launches the composer
+        public void launchComposeView(MenuItem miCompose) {
+            Intent i = new Intent(TimelineActivity.this, ComposeActivity.class);
+            startActivityForResult(i, REQUEST_CODE);
+        }
+
+
+    //  Time to handle the result of the sub-activity
+        @Override
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            // REQUEST_CODE is defined above
+            if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+                // Extract name value from result extras
+               Tweet tweet = data.getParcelableExtra("New tweet");
+                tweets.add(0, tweet);
+                tweetAdapter.notifyItemInserted(0);
+                rvTweets.scrollToPosition(0);
+            }
     }
 
 }

@@ -51,4 +51,11 @@
         android:layout_below="@+id/tvBody"
         android:layout_toEndOf="@+id/ivProfileImage"/>
 
+    <ImageButton
+        android:id="@+id/ibReply"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/tvBody"
+        android:layout_toEndOf="@+id/tvRelativeTime" />
+
 </RelativeLayout>

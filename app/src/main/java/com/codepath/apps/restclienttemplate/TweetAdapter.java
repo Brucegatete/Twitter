@@ -1,11 +1,14 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,16 +24,22 @@ import java.util.Locale;
  * Created by brucegatete on 6/26/17.
  */
 
-public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>{
+public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder> implements View.OnClickListener{
 
     private List<Tweet> mTweets;
     Context context;
+    ImageButton ibReply;
+    private final int REP_CODE = 10;
+
     //pass in the tweets array in the constructor
     public TweetAdapter(List<Tweet> tweets) {
         mTweets = tweets;
     }
 
-    //for each row inflate the layout and cache references into the View Holder
+    public int getREP_CODE() {
+        return REP_CODE;
+    }
+//for each row inflate the layout and cache references into the View Holder
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -42,13 +51,29 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
         return  viewHolder;
     }
 
+
+
+    // Clean all elements of the recycler
+    public void clear() {
+        mTweets.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items -- change to type used
+    public void addAll(List<Tweet> list) {
+        mTweets.addAll(list);
+        notifyDataSetChanged();
+    }
+
     //bind the values based on the position of the element
+
+
 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         //get the data according to position
-        Tweet tweet = mTweets.get(position);
+        final Tweet tweet = mTweets.get(position);
 
         // populate the views according to the data
         holder.tvUserName.setText(tweet.user.name);
@@ -56,16 +81,38 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
         holder.tvRelativeTime.setText(getRelativeTimeAgo(tweet.createdAt));
         holder.tvScreenName.setText("@" + tweet.user.screenName);
 
-
         Glide.with(context)
                 .load(tweet.user.profileImageUrl)
                 .into(holder.ivProfileImage);
+        holder.ibReply.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(context, ComposeActivity.class);
+                    i.putExtra("screen_name", tweet.user.screenName);
+                    i.putExtra("uid", tweet.uid);
+                    ((Activity) context).startActivityForResult(i, REP_CODE);
+
+                }
+
+
+        });
+
+
+
+
     }
 
     @Override
     public int getItemCount() {
         return mTweets.size();
     }
+
+    @Override
+    public void onClick(View view) {
+
+
+    }
+
 
     // create ViewHolder class
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -74,6 +121,7 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
         public TextView tvBody;
         public TextView tvRelativeTime;
         public  TextView tvScreenName;
+        public View ibReply;
 
 
         public ViewHolder(View itemView) {
@@ -85,6 +133,7 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
             tvBody = (TextView) itemView.findViewById(R.id.tvBody);
             tvRelativeTime = (TextView) itemView.findViewById(R.id.tvRelativeTime);
             tvScreenName = (TextView) itemView.findViewById(R.id.tvScreenName);
+            ibReply = (ImageButton) itemView.findViewById(R.id.ibReply);
 
 
         }

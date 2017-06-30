@@ -5,13 +5,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/miCompose"
-        app:showAsAction="ifRoom"
+        android:onClick="launchComposeView"
         android:title="Compose"
-        android:onClick="launchComposeView">
-    </item>
+        app:showAsAction="ifRoom"></item>
     <item
         android:id="@+id/miProfile"
         app:showAsAction="ifRoom|withText"
         android:title="Profile">
     </item>
+    <item
+        android:id="@+id/miActionProgress"
+        android:title="Loading..."
+        android:visible="false"
+        android:orderInCategory="100"
+        app:showAsAction="always" />
 </menu>

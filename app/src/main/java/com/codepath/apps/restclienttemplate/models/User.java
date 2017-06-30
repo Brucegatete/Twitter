@@ -50,8 +50,9 @@ public class User implements Parcelable{
         // extract and fill out values
         user.name = json.getString("name");
         user.uid = json.getLong("id");
-        user.profileImageUrl = json.getString("profile_image_url");
+        user.profileImageUrl = json.getString("profile_image_url").replace("_normal", "");
         user.screenName = json.getString("screen_name");
+
         return user;
     }
 

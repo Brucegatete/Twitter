@@ -2,12 +2,14 @@ package com.codepath.apps.restclienttemplate;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -21,24 +23,31 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.Header;
 
 public class TimelineActivity extends AppCompatActivity {
+    //define all the attributes
     TwitterClient client;
     TweetAdapter tweetAdapter;
     ArrayList<Tweet> tweets;
     RecyclerView rvTweets;
+    ImageButton ibReply;
+
     //Request code for receiving the data sent between activities
     private final int REQUEST_CODE = 20;
     private final int RESULT_OK = 12;
+
+    //swipe container for reflesh.
+    private SwipeRefreshLayout swipeContainer;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+        //initiate the Twitter client
         client = TwitterApp.getRestClient();
-
         // find the recycler view
         rvTweets = (RecyclerView) findViewById(R.id.rvTweet);
-
-        // init the arraylist (data sources)
+        // initiate the arraylist (data sources)
         tweets = new ArrayList<>();
         //construct the adapter from this datasource
         tweetAdapter = new TweetAdapter(tweets);
@@ -46,9 +55,32 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweets.setLayoutManager(new LinearLayoutManager(this));
         //set the adapter
         rvTweets.setAdapter(tweetAdapter);
-
+        //set the image button for replying
+        ibReply = (ImageButton) findViewById(R.id.ibReply);
+        //set an onClickListener
         populateTimeline();
+
+
+        // Lookup the swipe container view
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                tweetAdapter.clear();
+                populateTimeline();
+                swipeContainer.setRefreshing(false);
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
     }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -66,21 +98,18 @@ public class TimelineActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-              //  Log.d("TwitterClient", response.toString());
                 // for each entry, deserializwe the JSOn object
                 for(int i = 0; i < response.length(); i++ ){
                     // convert each object to a tweet model
-
-                    // add that tweet model to our data source
-
-                    // notify the adapter that we have added the item
                     Tweet tweet = null;
                     try {
                         tweet = Tweet.fromJSON(response.getJSONObject(i));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    // add that tweet model to our data source(the arrayList)
                     tweets.add(tweet);
+                    // notify the adapter that we have added the item
                     tweetAdapter.notifyItemInserted(tweets.size() - 1);;
                 }
             }
@@ -114,17 +143,26 @@ public class TimelineActivity extends AppCompatActivity {
         }
 
 
-    //  Time to handle the result of the sub-activity
-        @Override
-        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-            // REQUEST_CODE is defined above
-            if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
-                // Extract name value from result extras
-               Tweet tweet = data.getParcelableExtra("New tweet");
-                tweets.add(0, tweet);
-                tweetAdapter.notifyItemInserted(0);
-                rvTweets.scrollToPosition(0);
-            }
+    public int getREQUEST_CODE() {
+        return REQUEST_CODE;
     }
 
+    // handle the result of the sub-activity
+        @Override
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (resultCode == RESULT_OK && (requestCode == REQUEST_CODE || requestCode == tweetAdapter.getREP_CODE())) {
+                // Extract name value from result extras
+                Tweet tweet = data.getParcelableExtra("New tweet");
+                //add the tweet to the first row of the view
+                tweets.add(0, tweet);
+                //notify the adapter that a new item has been inserted
+                tweetAdapter.notifyItemInserted(0);
+
+                //scroll back to the first position
+                rvTweets.scrollToPosition(0);
+            }
+        }
+
+
 }
+

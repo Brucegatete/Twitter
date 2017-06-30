@@ -62,9 +62,6 @@ public class Tweet implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-//        out.writeInt(mData);
-//        out.writeString(mName);
-//        out.writeParcelable(mInfo, i);
         parcel.writeString(body);
         parcel.writeLong(uid);
         parcel.writeString(createdAt);

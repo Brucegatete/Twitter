@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -28,7 +29,7 @@ public class TimelineActivity extends AppCompatActivity {
     TweetAdapter tweetAdapter;
     ArrayList<Tweet> tweets;
     RecyclerView rvTweets;
-    ImageButton ibReply;
+    ImageView ivReply;
 
     //Request code for receiving the data sent between activities
     private final int REQUEST_CODE = 20;
@@ -36,8 +37,6 @@ public class TimelineActivity extends AppCompatActivity {
 
     //swipe container for reflesh.
     private SwipeRefreshLayout swipeContainer;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +55,7 @@ public class TimelineActivity extends AppCompatActivity {
         //set the adapter
         rvTweets.setAdapter(tweetAdapter);
         //set the image button for replying
-        ibReply = (ImageButton) findViewById(R.id.ibReply);
+        ivReply = (ImageButton) findViewById(R.id.ivReply);
         //set an onClickListener
         populateTimeline();
 
@@ -77,9 +76,7 @@ public class TimelineActivity extends AppCompatActivity {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -87,8 +84,7 @@ public class TimelineActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
-
+    //method to populate the timeline
     private void populateTimeline (){
         client.getHomeTimeline(new JsonHttpResponseHandler(){
             @Override
@@ -133,19 +129,15 @@ public class TimelineActivity extends AppCompatActivity {
             }
 
         });
-
     }
 
     //method that launches the composer
         public void launchComposeView(MenuItem miCompose) {
             Intent i = new Intent(TimelineActivity.this, ComposeActivity.class);
+            i.putExtra("code", REQUEST_CODE);
             startActivityForResult(i, REQUEST_CODE);
         }
 
-
-    public int getREQUEST_CODE() {
-        return REQUEST_CODE;
-    }
 
     // handle the result of the sub-activity
         @Override
@@ -162,6 +154,10 @@ public class TimelineActivity extends AppCompatActivity {
                 rvTweets.scrollToPosition(0);
             }
         }
+
+    public int getREQUEST_CODE() {
+        return REQUEST_CODE;
+    }
 
 
 }

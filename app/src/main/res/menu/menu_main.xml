@@ -3,16 +3,13 @@
      such as `res/menu/menu_movies.xml`  -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/miCompose"
         android:onClick="launchComposeView"
-        android:title="Compose"
-        app:showAsAction="ifRoom"></item>
-    <item
-        android:id="@+id/miProfile"
-        app:showAsAction="ifRoom|withText"
-        android:title="Profile">
-    </item>
+        android:icon="@drawable/ic_vector_compose"
+        app:showAsAction="ifRoom"
+        android:title="Compose"></item>
     <item
         android:id="@+id/miActionProgress"
         android:title="Loading..."

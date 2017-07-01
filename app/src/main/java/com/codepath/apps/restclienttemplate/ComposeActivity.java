@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,6 +25,7 @@ public class ComposeActivity extends AppCompatActivity{
     private TextView tvCounter;
     private TwitterClient client;
     private final int RESULT_OK = 12;
+    String screen_name;
 
 
     //define and initiate the texteditor watcher for the character count
@@ -41,7 +43,6 @@ public class ComposeActivity extends AppCompatActivity{
         }
     };
 
-    // TODO what does protected mean?
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +51,11 @@ public class ComposeActivity extends AppCompatActivity{
         tvCounter = (TextView) findViewById(R.id.tvCounter);
         et_simple = (EditText) findViewById(R.id.et_simple);
         et_simple.addTextChangedListener(mTextEditorWatcher);
-
+        //set the screen_name on the reply activity
+        screen_name =  getIntent().getStringExtra("screen_name");
+        if (screen_name != null) {
+            et_simple.setText("@" + screen_name);
+        }
     }
 
 
@@ -74,7 +79,7 @@ public class ComposeActivity extends AppCompatActivity{
                 // Prepare data intent
                 Intent data = new Intent();
                 // Pass relevant data back as a result
-                data.putExtra("New tweet", tweet);
+                data.putExtra("New Tweet", (Parcelable) tweet);
                 // Activity finished ok, return the data
                 setResult(RESULT_OK, data); // set result code and bundle data for response
                 finish(); // closes the activity, pass data to parent
@@ -85,10 +90,6 @@ public class ComposeActivity extends AppCompatActivity{
                 super.onFailure(statusCode, headers, throwable, errorResponse);
             }
         });
-
-
-
     }
-
 }
 

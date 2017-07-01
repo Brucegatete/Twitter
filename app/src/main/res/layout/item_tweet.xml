@@ -51,11 +51,32 @@
         android:layout_below="@+id/tvBody"
         android:layout_toEndOf="@+id/ivProfileImage"/>
 
-    <ImageButton
-        android:id="@+id/ibReply"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_below="@+id/tvBody"
+    <ImageView
+        android:id="@+id/ivReply"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_marginLeft="5dp"
+        app:srcCompat="@drawable/ic_vector_compose_dm"
+        android:layout_alignTop="@+id/btReTweet"
         android:layout_toEndOf="@+id/tvRelativeTime" />
+
+    <ImageView
+        android:id="@+id/btReTweet"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_alignBottom="@+id/tvRelativeTime"
+        android:layout_marginLeft="5dp"
+        android:layout_toEndOf="@+id/ivReply"
+        android:text="Button"
+        app:srcCompat="@drawable/ic_retweet_twitter" />
+
+    <ImageView
+        android:id="@+id/ivHeart"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_marginLeft="5dp"
+        android:layout_alignBottom="@id/ivReply"
+        android:layout_toEndOf="@+id/btReTweet"
+        app:srcCompat="@drawable/ic_heart_twiter"/>
 
 </RelativeLayout>

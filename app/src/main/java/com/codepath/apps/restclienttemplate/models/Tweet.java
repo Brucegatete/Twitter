@@ -1,5 +1,8 @@
 package com.codepath.apps.restclienttemplate.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -7,16 +10,34 @@ import org.json.JSONObject;
  * Created by brucegatete on 6/26/17.
  */
 
-public class Tweet{
+public class Tweet implements Parcelable{
     public  String body;
     public long uid;
     public User user;
     public String createdAt;
     public boolean retweeted;
-    public boolean liked;
 
 
 
+    protected Tweet(Parcel in) {
+        body = in.readString();
+        uid = in.readLong();
+        createdAt = in.readString();
+        user = in.readParcelable(User.class.getClassLoader());
+
+    }
+
+    public static final Creator<Tweet> CREATOR = new Creator<Tweet>() {
+        @Override
+        public Tweet createFromParcel(Parcel in) {
+            return new Tweet(in);
+        }
+
+        @Override
+        public Tweet[] newArray(int size) {
+            return new Tweet[size];
+        }
+    };
 
     public Tweet() {
 
@@ -32,9 +53,23 @@ public class Tweet{
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
         tweet.retweeted = jsonObject.getBoolean("retweeted");
-        tweet.liked = jsonObject.getBoolean("favorited");
         return tweet;
 
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(body);
+        parcel.writeLong(uid);
+        parcel.writeString(createdAt);
+        parcel.writeParcelable(user, i);
+        parcel.writeBooleanArray(new boolean[]{retweeted});
+
+
+    }
 }

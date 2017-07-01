@@ -144,7 +144,7 @@ public class TimelineActivity extends AppCompatActivity {
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
             if (resultCode == RESULT_OK && (requestCode == REQUEST_CODE || requestCode == tweetAdapter.getREP_CODE())) {
                 // Extract name value from result extras
-                Tweet tweet = data.getParcelableExtra("New tweet");
+                Tweet tweet = data.getParcelableExtra("New Tweet");
                 //add the tweet to the first row of the view
                 tweets.add(0, tweet);
                 //notify the adapter that a new item has been inserted

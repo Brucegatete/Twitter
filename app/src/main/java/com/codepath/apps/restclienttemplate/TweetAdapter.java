@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.models.Tweet;
-import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -86,56 +88,134 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
         // instantiate the client
         client = TwitterApp.getRestClient();
 
-        holder.ivReply.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View view) {
-                    Intent i = new Intent(context, ComposeActivity.class);
-                    i.putExtra("screen_name", tweet.user.screenName);
-                    i.putExtra("uid", tweet.uid);
-                    i.putExtra("code", REP_CODE);
-                    ((Activity) context).startActivityForResult(i, REP_CODE);
-                }
-        });
-
-        holder.btReTweet.setOnClickListener(new View.OnClickListener(){
+        holder.ivReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                client.reTweet(Long.toString(tweet.uid), new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        holder.btReTweet.setPressed(true);
-                        Toast.makeText(context, "Retweeted", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        Log.e("TweetAdapter", String.format("Robert happened %s", responseBody.toString()));
-                        Toast.makeText(context, String.format("Robert happened %s", responseBody.toString()), Toast.LENGTH_SHORT).show();
-
-                    }
-                });
+                Intent i = new Intent(context, ComposeActivity.class);
+                i.putExtra("screen_name", tweet.user.screenName);
+                i.putExtra("uid", tweet.uid);
+                i.putExtra("code", REP_CODE);
+                ((Activity) context).startActivityForResult(i, REP_CODE);
             }
         });
 
-        holder.ivHeart.setOnClickListener(new View.OnClickListener(){
+        holder.btReTweet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!tweet.retweeted){
+                    client.reTweet(Long.toString(tweet.uid), new JsonHttpResponseHandler() {
+
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            holder.btReTweet.setPressed(true);
+                            tweet.retweeted = true;
+                            Toast.makeText(context, "Retweeted", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                            super.onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }else{
+                    client.unReTweet(tweet.uid, new JsonHttpResponseHandler(){
+
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                           holder.btReTweet.setPressed(false);
+                           tweet.retweeted =  false;
+                            Toast.makeText(context, "unRetweeted", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                            super.onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                }
+
+            }
+        });
+
+        holder.ivHeart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //client = TwitterApp.getRestClient();
-                client.sendFavorite(Long.toString(tweet.uid), new AsyncHttpResponseHandler() {
+                client.sendFavorite(Long.toString(tweet.uid), new JsonHttpResponseHandler() {
+
                     @Override
-                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                       holder.ivHeart.setSelected(true);
-                       Toast.makeText(context, "liked", Toast.LENGTH_LONG).show();
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        holder.ivHeart.setPressed(true);
+                        Toast.makeText(context, "liked", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                        super.onSuccess(statusCode, headers, response);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         Toast.makeText(context, "failed", Toast.LENGTH_LONG).show();
                     }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        super.onFailure(statusCode, headers, responseString, throwable);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                    }
+
+//                    @Override
+//                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+//                       holder.ivHeart.setSelected(true);
+//                       Toast.makeText(context, "liked", Toast.LENGTH_LONG).show();
+//                    }
+//
+////                    @Override
+////                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+////                        Toast.makeText(context, "failed", Toast.LENGTH_LONG).show();
+//                //}
+//                });
+//            }
+//        });
                 });
             }
         });
-   }
+    }
 
 
     // create ViewHolder class

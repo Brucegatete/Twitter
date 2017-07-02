@@ -16,6 +16,8 @@ public class Tweet implements Parcelable{
     public User user;
     public String createdAt;
     public boolean retweeted;
+    public boolean liked;
+    public int retweetCount, likeCount;
 
 
 
@@ -53,6 +55,9 @@ public class Tweet implements Parcelable{
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
         tweet.retweeted = jsonObject.getBoolean("retweeted");
+        tweet.liked = jsonObject.getBoolean("favorited");
+        tweet.likeCount = jsonObject.getInt("favorite_count");
+        tweet.retweetCount = jsonObject.getInt("retweet_count");
         return tweet;
 
     }
@@ -69,7 +74,8 @@ public class Tweet implements Parcelable{
         parcel.writeString(createdAt);
         parcel.writeParcelable(user, i);
         parcel.writeBooleanArray(new boolean[]{retweeted});
-
-
+        parcel.writeBooleanArray(new boolean[]{liked});
+        parcel.writeInt(likeCount);
+        parcel.writeInt(retweetCount);
     }
 }

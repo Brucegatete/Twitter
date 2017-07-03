@@ -101,6 +101,12 @@
                 android:layout_toEndOf="@+id/ivReply"
                 android:text="Button"
                 app:srcCompat="@drawable/ic_retweet_twitter" />
+            <TextView
+                android:layout_width="14dp"
+                android:layout_height="match_parent"
+                android:id="@+id/tvRetweetCount"
+                android:text="0"
+                android:layout_marginLeft="5dp" />
 
         </LinearLayout>
 
@@ -117,6 +123,12 @@
                 android:layout_marginLeft="50dp"
                 android:layout_toEndOf="@+id/btReTweet"
                 app:srcCompat="@drawable/ic_heart_twiter" />
+            <TextView
+                android:layout_width="14dp"
+                android:layout_height="match_parent"
+                android:id="@+id/tvLikeCount"
+                android:text="0"
+                android:layout_marginLeft="5dp" />
 
         </LinearLayout>
 

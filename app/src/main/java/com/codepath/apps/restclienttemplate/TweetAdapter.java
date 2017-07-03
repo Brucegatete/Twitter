@@ -81,6 +81,8 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
         holder.tvRelativeTime.setText(getRelativeTimeAgo(tweet.createdAt));
         holder.tvScreenName.setText("@" + tweet.user.screenName);
         holder.btReTweet.findViewById(R.id.btReTweet);
+        holder.tvLikeCount.setText(tweet.likeCount + "");
+        holder.tvRetweetCount.setText(tweet.retweetCount + "");
 
         Glide.with(context)
                 .load(tweet.user.profileImageUrl)
@@ -108,7 +110,9 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             holder.btReTweet.setPressed(true);
+                            holder.tvRetweetCount.setText((tweet.retweetCount + 1) + "");
                             tweet.retweeted = true;
+                            tweet.retweetCount += 1;
                             Toast.makeText(context, "Retweeted", Toast.LENGTH_SHORT).show();
                         }
 
@@ -133,12 +137,15 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
                         }
                     });
                 }else{
-                    client.unReTweet(tweet.uid, new JsonHttpResponseHandler(){
+                    client.unReTweet(Long.toString(tweet.uid), new JsonHttpResponseHandler(){
 
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                           holder.btReTweet.setPressed(false);
-                           tweet.retweeted =  false;
+
+                            holder.btReTweet.setPressed(false);
+                            holder.tvRetweetCount.setText((tweet.retweetCount - 1) + "");
+                            tweet.retweeted =  false;
+                            tweet.retweetCount -= 1;
                             Toast.makeText(context, "unRetweeted", Toast.LENGTH_SHORT).show();
                         }
 
@@ -171,48 +178,76 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
             @Override
             public void onClick(View view) {
                 //client = TwitterApp.getRestClient();
-                client.sendFavorite(Long.toString(tweet.uid), new JsonHttpResponseHandler() {
+                if (!tweet.liked) {
+                    client.sendFavorite(Long.toString(tweet.uid), new JsonHttpResponseHandler() {
 
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        holder.ivHeart.setPressed(true);
-                        Toast.makeText(context, "liked", Toast.LENGTH_LONG).show();
-                    }
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            holder.ivHeart.setPressed(true);
+                            holder.tvLikeCount.setText((tweet.likeCount + 1) + "");
+                            tweet.liked = true;
+                            tweet.likeCount += 1;
+                            Toast.makeText(context, "liked", Toast.LENGTH_LONG).show();
+                        }
 
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                        super.onSuccess(statusCode, headers, response);
-                    }
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                            super.onSuccess(statusCode, headers, response);
+                        }
 
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        Toast.makeText(context, "failed", Toast.LENGTH_LONG).show();
-                    }
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            Toast.makeText(context, "failed", Toast.LENGTH_LONG).show();
+                        }
 
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        super.onFailure(statusCode, headers, responseString, throwable);
-                    }
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
 
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                        super.onFailure(statusCode, headers, throwable, errorResponse);
-                    }
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
 
-//                    @Override
-//                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-//                       holder.ivHeart.setSelected(true);
-//                       Toast.makeText(context, "liked", Toast.LENGTH_LONG).show();
-//                    }
-//
-////                    @Override
-////                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-////                        Toast.makeText(context, "failed", Toast.LENGTH_LONG).show();
-//                //}
-//                });
-//            }
-//        });
-                });
+                    });
+
+
+                }else {
+
+                    client.unSendFavorite(Long.toString(tweet.uid), new JsonHttpResponseHandler(){
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Toast.makeText(context, "unliked", Toast.LENGTH_LONG).show();
+                            holder.ivHeart.setPressed(false);
+                            holder.tvLikeCount.setText((tweet.likeCount - 1) + "");
+                            tweet.liked = false;
+                            tweet.likeCount -= 1;
+                        }
+
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                            super.onSuccess(statusCode, headers, response);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+
+                }
+
             }
         });
     }
@@ -228,6 +263,8 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
         public ImageView ivReply;
         public ImageView btReTweet;
         public  ImageView ivHeart;
+        public TextView tvLikeCount;
+        public TextView tvRetweetCount;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -240,6 +277,8 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
             ivReply = (ImageView) itemView.findViewById(R.id.ivReply);
             btReTweet = (ImageView) itemView.findViewById(R.id.btReTweet);
             ivHeart = (ImageView) itemView.findViewById(R.id.ivHeart);
+            tvLikeCount = (TextView) itemView.findViewById(R.id.tvLikeCount);
+            tvRetweetCount = (TextView) itemView.findViewById(R.id.tvRetweetCount);
         }
     }
 

@@ -17,6 +17,9 @@ public class User implements Parcelable{
     public long uid;
     public  String profileImageUrl;
     public String screenName;
+    public String tagline;
+    public int followersCount;
+    public int followingCount;
 
 
     protected User(Parcel in) {
@@ -52,6 +55,9 @@ public class User implements Parcelable{
         user.uid = json.getLong("id");
         user.profileImageUrl = json.getString("profile_image_url").replace("_normal", "");
         user.screenName = json.getString("screen_name");
+        user.tagline = json.getString("description");
+        user.followersCount = json.getInt("followers_count");
+        user.followingCount = json.getInt("friends_count");
 
         return user;
     }

@@ -19,7 +19,7 @@
             android:layout_alignParentTop="true"
             android:clickable="true"
             app:srcCompat="@android:color/black" />
-        </RelativeLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/relLayUserInfo"
@@ -134,36 +134,4 @@
         </LinearLayout>
 
     </LinearLayout>
-
-    <!--<RelativeLayout-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content">-->
-    <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
-    <!--&lt;!&ndash;android:id="@+id/ivReply"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_width="14dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_height="14dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_marginLeft="5dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;app:srcCompat="@drawable/ic_vector_compose_dm"&ndash;&gt;-->
-    <!--&lt;!&ndash;/>&ndash;&gt;-->
-
-    <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
-    <!--&lt;!&ndash;android:id="@+id/btReTweet"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_width="14dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_height="14dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_marginLeft="5dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_toEndOf="@+id/ivReply"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:text="Button"&ndash;&gt;-->
-    <!--&lt;!&ndash;app:srcCompat="@drawable/ic_retweet_twitter" />&ndash;&gt;-->
-
-    <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
-    <!--&lt;!&ndash;android:id="@+id/ivHeart"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_width="14dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_height="14dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_marginLeft="5dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_alignBottom="@id/ivReply"&ndash;&gt;-->
-    <!--&lt;!&ndash;android:layout_toEndOf="@+id/btReTweet"&ndash;&gt;-->
-    <!--&lt;!&ndash;app:srcCompat="@drawable/ic_heart_twiter"/>&ndash;&gt;-->
-    <!--</RelativeLayout>-->
-
-
 </RelativeLayout>

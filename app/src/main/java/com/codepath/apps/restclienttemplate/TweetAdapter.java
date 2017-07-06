@@ -36,10 +36,19 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
     Context context;
     private final int REP_CODE = 10;
     private TwitterClient  client;
+    private  TweetAdapterListener mListener;
+
+
+    //define an interface required by the viewholder
+    public interface TweetAdapterListener {
+        public void onItemSelected (View view, int position);
+    }
+
 
     //pass in the tweets array in the constructor
-    public TweetAdapter(List<Tweet> tweets) {
+    public TweetAdapter(List<Tweet> tweets, TweetAdapterListener listener) {
         mTweets = tweets;
+        mListener = listener;
     }
 
     public int getREP_CODE() {
@@ -80,13 +89,23 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
         holder.tvBody.setText(tweet.body);
         holder.tvRelativeTime.setText(getRelativeTimeAgo(tweet.createdAt));
         holder.tvScreenName.setText("@" + tweet.user.screenName);
-        holder.btReTweet.findViewById(R.id.btReTweet);
+        holder.btReTweet.findViewById(R.id.ivRetweet);
         holder.tvLikeCount.setText(tweet.likeCount + "");
         holder.tvRetweetCount.setText(tweet.retweetCount + "");
+
+        holder.ivProfileImage.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent (context, ProfileActivity.class);
+                i.putExtra("screen_name", tweet.user.screenName);
+                (context).startActivity(i);
+            }
+        });
 
         Glide.with(context)
                 .load(tweet.user.profileImageUrl)
                 .into(holder.ivProfileImage);
+
         // instantiate the client
         client = TwitterApp.getRestClient();
 
@@ -211,8 +230,6 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
                         }
 
                     });
-
-
                 }else {
 
                     client.unSendFavorite(Long.toString(tweet.uid), new JsonHttpResponseHandler(){
@@ -254,7 +271,7 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
 
 
     // create ViewHolder class
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public  class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView ivProfileImage;
         public TextView tvUserName;
         public TextView tvBody;
@@ -275,15 +292,37 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
             tvRelativeTime = (TextView) itemView.findViewById(R.id.tvRelativeTime);
             tvScreenName = (TextView) itemView.findViewById(R.id.tvScreenName);
             ivReply = (ImageView) itemView.findViewById(R.id.ivReply);
-            btReTweet = (ImageView) itemView.findViewById(R.id.btReTweet);
+            btReTweet = (ImageView) itemView.findViewById(R.id.ivRetweet);
             ivHeart = (ImageView) itemView.findViewById(R.id.ivHeart);
             tvLikeCount = (TextView) itemView.findViewById(R.id.tvLikeCount);
             tvRetweetCount = (TextView) itemView.findViewById(R.id.tvRetweetCount);
+
+//            ivProfileImage.setOnClickListener(new View.OnClickListener(){
+//                @Override
+//                public void onClick(View view) {
+//                    int position = getAdapterPosition();
+//                    mListener.onItemSelected(view, position);
+//                }
+//            });
+
+
+            //handle row click event
+            itemView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    if (mListener != null){
+                        //get the position of row element
+                        int position = getAdapterPosition();
+                        // fire the listener callback
+                        mListener.onItemSelected(view, position);
+                    }
+                }
+            });
         }
     }
 
     // getRelativeTimeAgo("Mon Apr 01 21:16:23 +0000 2014");
-    public String getRelativeTimeAgo(String rawJsonDate) {
+    public static String getRelativeTimeAgo(String rawJsonDate) {
         String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
         SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
         sf.setLenient(true);

@@ -92,7 +92,7 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
         holder.btReTweet.findViewById(R.id.ivRetweet);
         holder.tvLikeCount.setText(tweet.likeCount + "");
         holder.tvRetweetCount.setText(tweet.retweetCount + "");
-
+        holder.ivHeart.setSelected(tweet.liked);
         holder.ivProfileImage.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -268,7 +268,6 @@ public class TweetAdapter extends  RecyclerView.Adapter<TweetAdapter.ViewHolder>
             }
         });
     }
-
 
     // create ViewHolder class
     public  class ViewHolder extends RecyclerView.ViewHolder {

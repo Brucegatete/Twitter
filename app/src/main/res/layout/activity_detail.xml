@@ -34,6 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="User Name"
+            android:textColor="@color/black"
             android:layout_alignParentTop="true"
             android:layout_alignStart="@+id/tvRelativeTime" />
 
@@ -46,6 +47,7 @@
             android:layout_alignStart="@+id/tvUserName"
             android:layout_below="@+id/tvUserName"
             android:text="Screen Name"
+            android:textColor="@color/black"
             android:textAppearance="@android:style/TextAppearance.Small" />
 
         <TextView
@@ -54,6 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvScreenName"
             android:layout_marginLeft="5dp"
+            android:textColor="@color/black"
             android:text="Time Stamp" />
 
         <TextView
@@ -62,6 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvRelativeTime"
             android:layout_marginLeft="5dp"
+            android:textColor="@color/black"
             android:text="Tweet Body" />
     </RelativeLayout>
 
@@ -107,6 +111,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/tvRetweetCount"
                 android:text="0"
+                android:textColor="@color/black"
                 android:layout_marginLeft="5dp" />
 
         </LinearLayout>
@@ -129,6 +134,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/tvLikeCount"
                 android:text="0"
+                android:textColor="@color/black"
                 android:layout_marginLeft="5dp" />
 
         </LinearLayout>

@@ -3,9 +3,11 @@ package com.codepath.apps.restclienttemplate;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
@@ -13,6 +15,7 @@ import android.widget.ImageView;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
+import fragments.HomeTimelineFragment;
 import fragments.TweetsListFragment;
 import fragments.TweetsPagerAdapter;
 
@@ -24,6 +27,8 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
     //Request code for receiving the data sent between activities
     private final int REQUEST_CODE = 20;
     private final int RESULT_OK = 12;
+    TweetsPagerAdapter pagerAdapter;
+    ViewPager vpPager;
 
     //swipe container for reflesh.
     private SwipeRefreshLayout swipeContainer;
@@ -39,9 +44,10 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
         //set an onClickListener
 
         //get the view pager
-        ViewPager vpPager = (ViewPager) findViewById(R.id.viewpager);
+        vpPager = (ViewPager) findViewById(R.id.viewpager);
+        pagerAdapter = new TweetsPagerAdapter(getSupportFragmentManager(),this);
         //set the adapter for the pager
-        vpPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager(), this));
+        vpPager.setAdapter(pagerAdapter);
         //setup the TabLayout to the view pager
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(vpPager);
@@ -70,7 +76,28 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_timeline, menu);
-        return true;
+
+        //add functionalities for the search icon
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchItem.expandActionView();
+        searchView.requestFocus();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Intent i = new Intent(TimelineActivity.this, SearchActivity.class);
+                i.putExtra("query", query);
+                startActivity(i);
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
     }
 
 
@@ -89,6 +116,8 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
     }
 
 
+
+
     @Override
     public void onTweetSelected(Tweet tweet) {
         Intent i = new Intent(TimelineActivity.this, DetailedActivity.class);
@@ -97,20 +126,15 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
     }
 
     // handle the result of the sub-activity
-//        @Override
-//        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//            if (resultCode == RESULT_OK && (requestCode == REQUEST_CODE || requestCode == tweetAdapter.getREP_CODE())) {
-//                // Extract name value from result extras
-//                Tweet tweet = data.getParcelableExtra("New Tweet");
-//                //add the tweet to the first row of the view
-//                tweets.add(0, tweet);
-//                //notify the adapter that a new item has been inserted
-//                tweetAdapter.notifyItemInserted(0);
-//
-//                //scroll back to the first position
-//                rvTweets.scrollToPosition(0);
-//            }
-//        }
+        @Override
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (resultCode == RESULT_OK && (requestCode == REQUEST_CODE )) {
+                // Extract name value from result extras
+                Tweet tweet = data.getParcelableExtra("New Tweet");
+                //add the tweet to the first row of the view
+                ((HomeTimelineFragment) pagerAdapter.getItem(vpPager.getCurrentItem())).addTweet(tweet);
+            }
+        }
 
 //    public int getREQUEST_CODE() {
 //        return REQUEST_CODE;

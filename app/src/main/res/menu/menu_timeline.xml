@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/action_search"
+        android:orderInCategory="5"
+        android:title="Search"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="always|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+
     <item
         android:id="@+id/ibCompose"
         android:icon="@drawable/ic_vector_compose"
@@ -14,5 +22,5 @@
         android:icon="@drawable/ic_person_white_24dp"
         android:onClick="onProfileView"
         android:title="Item"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>

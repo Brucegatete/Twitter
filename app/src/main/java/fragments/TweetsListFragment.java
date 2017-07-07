@@ -73,5 +73,15 @@ public class TweetsListFragment extends Fragment implements TweetAdapter.TweetAd
         //Toast.makeText(getContext(), tweet.body, Toast.LENGTH_LONG).show();
         ((TweetSelectedListener)getActivity()).onTweetSelected(tweet);
     }
+
+    public  void addTweet(Tweet tweet){
+        tweets.add(0, tweet);
+        //notify the adapter that a new item has been inserted
+        tweetAdapter.notifyItemInserted(0);
+
+        //scroll back to the first position
+        rvTweets.scrollToPosition(0);
+
+    }
 }
 
